@@ -18,14 +18,15 @@ const currentTime = function (data) {
     JSON.stringify(data.seconds)
   );
 
-  let time = Number(localStorage.getItem('videoplayer-current-time'));
+  let time = JSON.parse(localStorage.getItem('videoplayer-current-time'));
   console.log(time);
 };
 
 player.on('timeupdate', throttle(currentTime, 1000));
 
+// метод "setCurrentTime" - запуск видео с того места где остановились, не пропадает при перезагрузке страницы
 player
-  .setCurrentTime(Number(localStorage.getItem('videoplayer-current-time')))
+  .setCurrentTime(JSON.parse(localStorage.getItem('videoplayer-current-time')))
   .then(function (seconds) {
     // seconds = the actual time that the player seeked to
   })
