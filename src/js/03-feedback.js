@@ -12,7 +12,7 @@ const LOCALSTORAGE_KEY = 'feedback-form-state';
 formDataSave();
 
 ref.form.addEventListener('input', throttle(onInput, 500));
-ref.form.addEventListener('submit', onSubmit);
+ref.form.addEventListener('submit', handleSubmitForm);
 
 function onInput(event) {
   formData[event.target.name] = event.target.value;
@@ -20,16 +20,28 @@ function onInput(event) {
 }
 
 function formDataSave() {
-  const localStorageData = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
+  if (loadLocalStorageKey(LOCALSTORAGE_KEY)) {
+    const outputFormData = loadLocalStorageKey(LOCALSTORAGE_KEY);
+    const formKeys = Object.keys(outputFormData);
 
-  if (localStorageData === null) {
-    return;
+    formKeys.map(element => {
+      document.querySelector(`[name='${element}']`).value =
+        outputFormData[element];
+    });
   }
-  ref.email.value = localStorageData.email;
-  ref.message.value = localStorageData.message;
 }
 
-function onSubmit(event) {
+function loadLocalStorageKey(key) {
+  try {
+    return localStorage.getItem(key) === null
+      ? undefined
+      : JSON.parse(localStorage.getItem(key));
+  } catch (error) {
+    console.console.error(error.message);
+  }
+}
+
+function handleSubmitForm(event) {
   event.preventDefault();
   localStorage.removeItem(LOCALSTORAGE_KEY);
   event.currentTarget.reset();
